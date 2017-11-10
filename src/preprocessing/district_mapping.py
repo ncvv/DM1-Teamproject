@@ -1,4 +1,8 @@
+import os
+
 import pandas as pd
+
+#doc = pd.read_csv(os.path.join('..', '..', 'data', 'subset', 'listings_sub.csv'))
 #from .tools import helperFunctions
 
 #doc = pd.read_csv("../../data/subset/listings_sub.csv")

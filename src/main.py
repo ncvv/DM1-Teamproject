@@ -1,8 +1,7 @@
 ''' Main entry point of the code, where the program is launched. '''
 import pandas as pd
 import utilities.io as io
-
-import subprocess
+import preprocessing.tokenizer as tkn
 
 def inspect_dataset(dataset):
     ''' Dataset inspection method for getting insights on different features, value examples, .. '''
@@ -30,8 +29,9 @@ def main():
 
     drop_list = ['listing_url', 'scrape_id', 'last_scraped', 'thumbnail_url', 'medium_url', 'picture_url', 'xl_picture_url', 'host_url', 'host_thumbnail_url', 'host_picture_url']
     drop_list.extend(['name', 'summary', 'space', 'description', 'transit', 'house_rules', 'amenities', 'neighborhood_overview', 'notes', 'access', 'interaction', 'host_about'])
-    listings_subset.drop(drop_list, axis=1, inplace=True)
-    io.write_csv(listings, '../data/processed/listings_sub_processed.csv')
+    drop_list.extend(['host_acceptance_rate', 'neighbourhood_group_cleansed', 'license', 'jurisdiction_names', 'has_availability', 'host_neighbourhood', 'host_listings_count', 'host_total_listings_count', 'street', 'city', 'state', 'market', 'smart_location', 'country', 'monthly_price', 'weekly_price', 'calendar_last_scraped', 'requires_license', ])
+    listings.drop(drop_list, axis=1, inplace=True)
+    io.write_csv(listings, '../data/processed/listings_processed.csv')
 
 if __name__ == '__main__':
     main()

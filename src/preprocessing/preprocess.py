@@ -25,21 +25,28 @@ class Preprocessor(object):
         air_url = 'https://www.airbnb.de/rooms/'
         ids = self.listings['id']
         num_apts = len(ids)
-        total = 0
-        for i in ids.tolist():
-            url = air_url + str(i)
-            total += 1
-            try:
-                # content-length only in header if listing is not available anymore. not on air
-                r = self.s.get(url).headers.__getitem__('content-length')
-                num_apts -= 1
-                sys.stdout.write('\rTotal: ' + str(total))
-                io.append_to_csv('../data/playground/results_on_air.csv', [i, 0])
-            except KeyError:
-                #pass
-                sys.stdout.write('\rTotal: ' + str(total))
-                io.append_to_csv('../data/playground/results_on_air.csv', [i, 1])
-        print('{0:.2f}% of Apartments are still on Air.'.format(float(num_apts / len(ids)) * 100))
+        res_path = '../data/playground/results_on_air.csv'
+        results = io.read_csv(res_path)['id'].tolist()
+        total = len(results)
+        with open(io.get_universal_path(res_path), 'a+', newline='') as f:
+            writer = csv.writer(f, delimiter=',')
+            for i in ids.tolist():
+                if i in results:
+                    print('Bereits vorhanden:' + str(i))
+                    continue
+                url = air_url + str(i)
+                total += 1
+                try:
+                    # content-length only in header if listing is not available anymore. not on air
+                    r = self.s.get(url).headers.__getitem__('content-length')
+                    num_apts -= 1
+                    writer.writerow([i, 0])
+                    sys.stdout.write('\rTotal: ' + str(total))
+                except KeyError:
+                    #pass
+                    writer.writerow([i, 1])
+                    sys.stdout.write('\rTotal: ' + str(total))
+            print('{0:.2f}% of Apartments are still on Air.'.format(float(num_apts / len(ids)) * 100))
 
     def process(self):
         ''' Main preprocessing method where all parts are tied together. '''

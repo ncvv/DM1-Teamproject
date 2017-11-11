@@ -15,7 +15,7 @@ def read_csv(path):
 #def append_column_to_csv():
 
 def append_to_csv(path, l, header=False, index=False):
-    ''' Append content to an existing csv file. '''
+    ''' Append one-dimensional list (one line, not several lists) to an existing csv file. '''
     with open(get_universal_path(path), 'a+', newline='') as f:
         writer = csv.writer(f, delimiter=',')
         writer.writerow(l)

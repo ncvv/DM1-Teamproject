@@ -1,5 +1,10 @@
+import sys
+sys.path.append('../')
+
 import os
 
 import pandas as pd
 
-doc = pd.read_csv(os.path.join('..', '..', 'data', 'subset', 'listings_sub.csv'))
+import utilities.io as io
+
+doc = io.read_csv('../../data/subset/listings_sub.csv')

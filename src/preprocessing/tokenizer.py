@@ -14,3 +14,6 @@ class SnowballTokenizer(object):
     def __call__(self, doc):
         # Tokenize the input with a regex and stem each token
         return [self.stemmer.stem(t) for t in self.token_pattern.findall(doc)]
+
+    def stem(self, word):
+        print(self.stemmer.stem(word))

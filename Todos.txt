@@ -20,12 +20,22 @@ DONE host_neighbourhood & host_total_listings_count & street & city & requires_l
 DONE host_listings_counts raus weil der calculated house_listings genauer aussieht
 TBA  host verification einzelne values in spalten umwandeln
 EVTL raus neighbourhood
-16 - zip code all upper case - double entries map to first key [Nadja]
+DONE zip code all upper case - double entries map to first key [Nadja]
 DONE was machen wir mit square feet? Column nicht ausgefüllt [Nico] -> hab die square feets mal rausgenommen, ist aber einfach umzukehren in der process() methode
 18 - data type of price is polynomial -> change to real by removing $ before numbers [Helene]
 TBA  reviews_XX so wichtig? wie damit umgehen? 
 DONE wie errechnet sich review-score [Helene] -> Bewertungen setzen sich nicht zusammen aus 5 unter review scores zu einem übergeordneten, der overall score wird separat angegeben
 DONE Einträge raus bei denen host_id oder host_name null [Nico] -> method calls of io.remove_empty_line_df in Preprocessor.process()
+
+
+
+
+
+
+TROUBLE SHOOTING:
+listings were ID and ZIP code are not given - filtered out (autom.) during the zip code cleanse - correct handling ?
+
+
 
 Presentation:
     reviews_xx veranschaulichen >> & implicationen erläutern (see RapidMiner statistics)

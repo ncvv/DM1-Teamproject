@@ -103,3 +103,7 @@ ENV/
 # Specific to this project
 .vscode
 data/original/*
+Test2.py
+data/playground/*
+zipcodes_cleanup.py
+host_cleanup.py

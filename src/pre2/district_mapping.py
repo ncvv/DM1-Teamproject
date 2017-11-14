@@ -1,16 +1,13 @@
 import sys
 sys.path.append('../')
 import pandas as pd
-import utilities.io as io
-import tools.helper_functions as helper
+import src.utilities.io as io
+import src.utilities.helper_functions as helper
 
-#doc = pd.read_csv(os.path.join('..', '..', 'data', 'subset', 'listings_sub.csv'))
-#from .tools import helperFunctions
 
-doc = io.read_csv("../../data/subset/listings_sub.csv")
-#doc= pd.read_csv(r"C:\Users\Wifo\Documents\DMProject\DM1-Teamproject\data\original\listings.csv")
-#barriers = pd.read_csv(r"C:\Users\Wifo\Documents\DMProject\DM1-Teamproject\data\original\neighbourhoods.csv")
-#listings = pd.read_csv (r"C:\Users\Wifo\Documents\DMProject\DM1-Teamproject\data\processed\listings_processed.csv")
+doc = io.read_csv("../data/subset/listings_sub.csv")
+barriers = io.read_csv("../data/original/neighbourhoods.csv")
+listings = pd.read_csv ("../data/original/listings.csv")
 
 frame = pd.DataFrame(doc)
 #print(len(frame.columns))
@@ -58,19 +55,13 @@ for column_name in column_list:
     print(df."[column_name]".unique())
 '''
 cutFrame = cutFrame[3000:3500]
-def uniqueValues(table):
-    for col in table:
-        print(col)
-        print(table[col].unique())
-        print("\n")
-
 
 #uniqueValues(cutFrame)
 
 #uniqueValues(barriers)
 # there is no neighbourhood group so this can be cut from the table neighbourhoods (1.st col)
 map = listings[['street', 'zipcode']]
-helper.uniqueValues(map)
+#helper.uniqueValues(clearmap)
 
 #uniqueValues(map)
 #print(map)
@@ -79,4 +70,4 @@ helper.uniqueValues(map)
 map_count = map.groupby('zipcode')['zipcode'].nunique() #.count()
 print(map_count)
 #print(map_count.count())
-
+print("Done!")

@@ -2,11 +2,9 @@
 ''' Preprocessing module containing all methods of data cleansing and
     tokenizing,stemming as well as stopword removal. '''
 
-import sys
-sys.path.append('../')
-
 import tokenize as tkn
-import utilities.io as io
+
+from src.utilities import io
 
 class Preprocessor(object):
     ''' Preprocesses data with different methods. '''

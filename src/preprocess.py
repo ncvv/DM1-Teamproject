@@ -50,7 +50,7 @@ class Preprocessor(object):
         df.loc[df['host_response_rate'] == 0, 'hrr_bins'] = 'Bad'
         return df
 
-    def Change_into_Bin_host_location():
+    def Change_into_Bin_host_location(self):
      with open('../data/processed/listings_processed.csv', 'r') as infile, open('../data/playground/neu1.csv', 'w') as outfile:
        reader = DictReader(infile)
        writer = DictWriter(outfile, fieldnames=reader.fieldnames)
@@ -61,26 +61,6 @@ class Preprocessor(object):
             else:
                 row['host_location'] = 0
             writer.writerow(row)     
-
-    ###Remove English Reviews
-    ###Ich weiß nicht ob das so funktioniert, bzw. ob ich es richtig integriert habe
-    def check_language(self):
-        com = self.reviews['comments']
-
-        for i in range(0,len(com)):
-            string = com[i]
-            language_list = []
-            lang = detect(string)
-            language_list.append(lang)
-
-        j = 0
-        for j in range(0,len(language_list)):
-            index_list = []
-            if language_list[j] != ['en']:
-                index_list.append(j)
-                j = j + 1
-
-
 
     def process(self):
         ''' Main preprocessing method where all parts are tied together. '''

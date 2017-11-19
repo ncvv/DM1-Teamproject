@@ -100,11 +100,11 @@ ENV/
 # mypy
 .mypy_cache/
 
+# DS Store
+.DS_Store
+
 # Specific to this project
 .vscode
 data/original/*
 Test2.py
-data/playground/*
-zipcodes_cleanup.py
-host_cleanup.py
 Jo.py

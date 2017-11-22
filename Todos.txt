@@ -4,15 +4,15 @@ Tasks:
     0X -: zugewiesen, noch nicht erledigt
 
 ROADMAP:
-17 - alle  Spalten die Preise enthalten normalisieren [4] 
-18 - Mail an Sven
+17 - alle  Spalten die Preise enthalten normalisieren [4] [NICO]
+18 - Mail an Sven [HELENE]
 19 - Classifier Evaluation - wie sollen wir das machen? Confusion Matrix , Classification Report? incl F1 Score
     in eine Methode schreiben? - reuse
-
-20 - Tiefe Knn und Decision Tree - beste Werte bestimmen
+20 - Tiefe Knn und - beste Werte bestimmen [KERSTIN]
 21 - balance data? Training data balancen -> für  precison, recall, f1 report aber keine accuracy - siehe Projekt Intro
     in eine Methode packen - reuse
-22 - 10 Fold Cross Validation  for Accuracy, F1 Score and AUC
+22 - 10 Fold Cross Validation  for Accuracy, F1 Score and AUC [KERSTIN]
+23 - Tiefe Decision Tree [DENNIS]
 
 DOC:
 1.Application area and goals [aus der Anmeldung und erweitern] [Kerstin und Dennis ]
@@ -34,8 +34,6 @@ FRAGEN FÜR DIE REVIEW SESSION MIT DEN PROFS - BIS SONNTAG ABEND SAMMELN
 02 - Label aus den Ratings erstellen  [! Ratings überwiegend gut]
 03? - mit den REviews - nur CV da nicht für neue
 
-
-DONE - ohne Reviews - dann können wir mit den Eigenschaften der Wohnung das Rating vorhersagen
 !! vll kurz vor dem anwenden einer Methode das ein oder andere Attribut ausschließen
 07 - KMEANS
 08 - Number of Reviews <=3 ausschließen
@@ -70,6 +68,7 @@ DONE zip code all upper case - double entries map to first key [Nadja]
 DONE was machen wir mit square feet? Column nicht ausgefüllt [Nico] -> hab die square feets mal rausgenommen, ist aber einfach umzukehren in der process() methode
 DONE wie errechnet sich review-score [Helene] -> Bewertungen setzen sich nicht zusammen aus 5 unter review scores zu einem übergeordneten, der overall score wird separat angegeben
 DONE Einträge raus bei denen host_id oder host_name null [Nico] -> method calls of io.remove_empty_line_df in Preprocessor.process()
+DONE - ohne Reviews - dann können wir mit den Eigenschaften der Wohnung das Rating vorhersagen
 TBA  reviews_xx wie damit umgehen? -> Einmal classification mit und ohne reviews, da halt jeweils drin/raus
 TBA  evtl. raus neighbourhood -> Mal mit/ohne probieren
 

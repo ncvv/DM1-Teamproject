@@ -1,5 +1,7 @@
 ''' Main entry point of the project, where the program is launched. '''
 
+import sys
+
 import requests
 
 import io_util as io
@@ -8,10 +10,11 @@ import preprocess as pp
 
 import pandas as pd
 
-def main():
+def main(renew_listings=False):
     ''' Main method. '''
-    listings = io.read_csv('../data/original/listings.csv')
-    pp.prepare_listings_data(listings)
+    if renew_listings:
+        listings = io.read_csv('../data/original/listings.csv')
+        pp.Preprocessor.prepare_listings_data(listings)
 
     reviews = io.read_csv('../data/original/reviews.csv')
     listings = io.read_csv('../data/processed/listings_processed.csv')
@@ -26,4 +29,8 @@ def main():
     #print(classifier)
 
 if __name__ == '__main__':
-    main()
+    if sys.argv[1:]:
+        renew_listings_flag = sys.argv[1]
+        main(renew_listings_flag)
+    else:
+        main()

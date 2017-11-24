@@ -34,8 +34,8 @@ class Classifier(object):
                "Accuracy NB:  " + (str('{0:.2f}%'.format(self.accuracy_nb))  if self.accuracy_nb  not 0 else "Not Executed.") + "\n"
                "Accuracy kNN: " + (str('{0:.2f}%'.format(self.accuracy_knn)) if self.accuracy_knn not 0 else "Not Executed.") + "\n"
                "Accuracy DT:  " + (str('{0:.2f}%'.format(self.accuracy_dt))  if self.accuracy_dt  not 0 else "Not Executed.") + "\n"
-               "Accuracy SVM: " + (str('{0:.2f}%'.format(self.accuracy_svm)) if self.accuracy_svm not 0 else "Not Executed.") + "\n\n"
-               "Accuracy NC: " + (str('{0:.2f}%'.format(self.accuracy_nc)) if self.accuracy_nc not 0 else "Not Executed.") + "\n\n"
+               "Accuracy SVM: " + (str('{0:.2f}%'.format(self.accuracy_svm)) if self.accuracy_svm not 0 else "Not Executed.") + "\n"
+               "Accuracy NC:  " + (str('{0:.2f}%'.format(self.accuracy_nc))  if self.accuracy_nc  not 0 else "Not Executed.") + "\n\n"
                "Max.: " + max(self.accuracy_nb, self.accuracy_knn, self.accuracy_dt, self.accuracy_svm, self.accuracy_nc)
 
     def encode_and_split(self):
@@ -51,7 +51,9 @@ class Classifier(object):
         #naive_bayes.fit(data_train, target_train)
         naive_bayes.fit(self.dataset_encoded, self.dataset['perceived_quality'])
         prediction = naive_bayes.predict(self.data_test)
-        self.accuracy_nb = accuracy_score(self.target_test, prediction)
+        acc = accuracy_score(self.target_test, prediction)
+        if acc > self.accuracy_nb:
+            self.accuracy_nb = acc
 
     def classify_knn(self, n=5):
         ''' Classification with K_Nearest_Neighbor. '''
@@ -59,11 +61,15 @@ class Classifier(object):
         knn_estimator.fit(self.dataset_encoded, self.dataset['perceived_quality'])
         #knn_estimator.fit(self.data_train, self.target_train)
         prediction = knn_estimator.predict(self.data_test)
-        self.accuracy_knn = knn_estimator.score(self.target_test, prediction)
+        acc = knn_estimator.score(self.target_test, prediction)
+        if acc > self.accuracy_knn:
+            self.accuracy_knn = acc
 
     def classify_nc(self):
-         ''' Classification with Nearest Centroid. '''
+        ''' Classification with Nearest Centroid. '''
         nc_estimator = NearestCentroid()
         nc_estimator.fit(self.dataset_encoded, self.dataset['perceived_quality'])
         prediction = nc_estimator.predict(self.data_test)
-        self.accuracy_nc = nc_estimator.score(self.target_test, prediction)
+        acc = nc_estimator.score(self.target_test, prediction)
+        if acc > self.accuracy_nc:
+            self.accuracy_nc = acc

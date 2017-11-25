@@ -32,15 +32,15 @@ def main(renew_listings=False):
 
     ### Warning: If line 230ff in preprocess.py ("mehr features") are used, .get_loc("") have to be adjusted.
     # Drop Amenities
-    #idx_amenity = dataset.columns.get_loc("Amenity_TV")
-    #idx_amenity_end = dataset.columns.get_loc ("Amenity_Paidparkingoffpremises") + 1
-    #dataset.drop(dataset.columns[idx_amenity: idx_amenity_end], axis=1, inplace=True)
-    #encoded_file_path += '_woamenities'
+    idx_amenity = dataset.columns.get_loc("Amenity_TV")
+    idx_amenity_end = dataset.columns.get_loc ("Amenity_Paidparkingoffpremises") + 1
+    dataset.drop(dataset.columns[idx_amenity: idx_amenity_end], axis=1, inplace=True)
+    encoded_file_path += '_woamenities'
 
     # Drop Transit TFIDF
     #idx_tfidf_transit = dataset.columns.get_loc("transit_10")
     #idx_tfidf_transit_end = dataset.columns.get_loc("transit_west") + 1
-   # dataset.drop(dataset.columns[idx_tfidf_transit: idx_tfidf_transit_end], axis=1, inplace=True)
+    #dataset.drop(dataset.columns[idx_tfidf_transit: idx_tfidf_transit_end], axis=1, inplace=True)
     #encoded_file_path += '_wotransit'
     
     # Drop Description TFIDF
@@ -50,7 +50,7 @@ def main(renew_listings=False):
     #encoded_file_path += '_wodescr'
     
     # Drop Neighborhood TFIDF
-    #idx_tfidf_neighborhood = dataset.columns.get_loc("neighborhood_overview_area")
+   # idx_tfidf_neighborhood = dataset.columns.get_loc("neighborhood_overview_area")
     #idx_tfidf_neighborhood_end = dataset.columns.get_loc("neighborhood_overview_walk") + 1
     #dataset.drop(dataset.columns[idx_tfidf_neighborhood: idx_tfidf_neighborhood_end], axis=1, inplace=True)
     #encoded_file_path += '_woneighbor'
@@ -65,8 +65,8 @@ def main(renew_listings=False):
     
     #print('#Columns: ' + str(len(list(dataset))))
     #print('#Rows: ' + str(len(dataset)) + '\n')
-    
-    classifier = cl.Classifier(dataset, encoded_file_path, display_columns=False, ignore_list='id'[])#, 'instant_bookable', 'require_guest_profile_picture', 'first_review', 'last_review'])
+    print(encoded_file_path)
+    classifier = cl.Classifier(dataset, encoded_file_path, display_columns=False, ignore_list=['id'])
     for kn in range(1, 10):
         classifier.classify_knn(n=kn)
     classifier.classify_nb()

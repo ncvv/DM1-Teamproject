@@ -57,11 +57,17 @@ def main(renew_listings=False):
     #dataset.drop(dataset.columns[idx_tfidf_house_rules: idx_tfidf_house_rules_end], axis=1, inplace=True)
 
     # Print Column Names
-    print('\nColumns:\n' + '\n'.join(list(dataset)) + '\n')
+    print('Columns:\n' + '\n'.join(list(dataset)) + '\n')
+    print('#Columns: ' + str(len(list(dataset))))
+    print('#Rows: ' + str(len(dataset)) + '\n')
 
+    # TBD in Testing:
+    # 1. unnötige columns vom orig. dataset rausschmeißen
+    # 2. andere NB Classifier
+    # 3. Compute other features? e.g. Num Amenities
     classifier = cl.Classifier(dataset)
     #for kn in range(1, 10):
-        #classifier.classify_knn(dataset, n=kn)
+        #classifier.classify_knn(n=kn)
     classifier.classify_nb()
     #..
     print(classifier)

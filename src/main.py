@@ -24,7 +24,7 @@ def main(renew_listings=False):
     file_name = 'dataset'
     
     long_tfidf = False
-    num_labels = 2
+    num_labels = 3
 
     file_name += '_' + str(num_labels)
 

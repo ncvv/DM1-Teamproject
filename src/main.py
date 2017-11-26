@@ -38,18 +38,18 @@ def main(renew_listings=False):
     print('#Rows: ' + str(len(dataset)) + '\n')
     
     classifier = cl.Classifier(dataset, encoded_file_path, long_tfidf=long_tfidf, display_columns=False)
-    #for kn in range(2, 7):
-    #classifier.classify_knn(n=kn)
-    #classifier.classify_nb()
-    #classifier.classify_svm()
-    #classifier.classify_nc()
-    #classifier.classify_dt()
+    for kn in range(2, 7):
+        classifier.classify_knn(n=kn)
+    classifier.classify_nb()
+    classifier.classify_svm()
+    classifier.classify_nc()
+    classifier.classify_dt()
     print(classifier)
-    #*******Para tuning
+    
+    #******* Para tuning
     #classifier.para_tuning_SVM( loose=False, fine=True)
     #classifier.para_tuning_SVM( loose=True, fine=False)
-
-    print(classifier)
+    #print(classifier)
 
 if __name__ == '__main__':
     if sys.argv[1:]:

@@ -254,13 +254,14 @@ class Preprocessor(object):
             one file with id and non-textual features (listings_processed). '''
         listings_text = listings[['id', 'transit', 'house_rules', 'amenities', 'description', 'neighborhood_overview']]
 
-        drop_list = ['listing_url', 'scrape_id', 'last_scraped', 'thumbnail_url', 'medium_url', 'picture_url', 'xl_picture_url', 'host_url', 'host_thumbnail_url', 'host_picture_url']
+        drop_list = ['listing_url', 'scrape_id', 'host_id', 'last_scraped', 'thumbnail_url', 'medium_url', 'picture_url', 'xl_picture_url', 'host_url', 'host_thumbnail_url', 'host_picture_url']
         drop_list.extend(['review_scores_cleanliness', 'review_scores_accuracy', 'review_scores_checkin', 'review_scores_communication', 'review_scores_location', 'review_scores_value'])
-        drop_list.extend(['host_acceptance_rate', 'neighbourhood', 'neighbourhood_group_cleansed', 'license', 'jurisdiction_names', 'has_availability', 'host_neighbourhood', 'host_listings_count', 'host_total_listings_count', 'street', 'city', 'state', 'market', 'smart_location', 'country', 'monthly_price', 'weekly_price', 'calendar_last_scraped', 'requires_license'])
         drop_list.extend(['name', 'summary', 'space', 'host_about', 'access', 'interaction', 'notes']) # text that is dropped
         drop_list.extend(['transit', 'house_rules', 'amenities', 'description', 'neighborhood_overview']) # text that is preserved with listing id in listings_text_processed.csv
-        drop_list.extend(['square_feet', 'country_code', 'host_id', 'longitude', 'latitude']) # drop other columns that are not valuable for classification but are left in til the end for understanding the dataset and validating it
+        # From here theoretically possible to include the cols.
+        drop_list.extend(['square_feet', 'country_code', 'longitude', 'latitude']) # drop other columns that are not valuable for classification but are left in til the end for understanding the dataset and validating it
         drop_list.extend(['host_name', 'host_since', 'calendar_updated', 'host_has_profile_pic', 'host_identity_verified', 'is_location_exact']) # 'Remove anything that is not related to the apartment'
+        drop_list.extend(['host_acceptance_rate', 'neighbourhood', 'neighbourhood_group_cleansed', 'license', 'jurisdiction_names', 'has_availability', 'host_neighbourhood', 'host_listings_count', 'host_total_listings_count', 'street', 'city', 'state', 'market', 'smart_location', 'country', 'monthly_price', 'weekly_price', 'calendar_last_scraped', 'requires_license'])
         listings.drop(drop_list, axis=1, inplace=True)
 
         io.write_csv(listings, '../data/processed/listings_processed.csv')

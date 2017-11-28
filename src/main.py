@@ -10,7 +10,7 @@ import classifier as cl
 
 def main(renew_listings=False):
     ''' Main method. '''
-    long_tfidf = True
+    long_tfidf = False
     num_labels = 2
     
     if renew_listings:
@@ -25,11 +25,10 @@ def main(renew_listings=False):
 
     # Classification
     file_name = 'dataset'
-    
-    long_tfidf = False
-    num_labels = 2
 
     file_name += '_' + str(num_labels)
+    if long_tfidf:
+        file_name += '_long_tfidf'
 
     dataset = io.read_csv('../data/final/' + file_name + '.csv')
 

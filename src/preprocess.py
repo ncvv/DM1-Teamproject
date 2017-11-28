@@ -245,7 +245,11 @@ class Preprocessor(object):
 
         # After all processing steps are done, write the listings file to the playground (this will be changed to ../data/final/_.csv)
         print('#Examples in the end: ' + str(len(self.listings)) + '\n#Columns in the end: ' + str(len(self.listings.columns))) # Printing the number of resulting examples for testing purposes and validation
-        io.write_csv(self.listings, '../data/final/dataset_' + str(num_labels) + '_long_tfidf' if long_tfidf else '' + '.csv')
+        path = '../data/final/dataset_' + str(num_labels)
+        if long_tfidf:
+            path += '_long_tfidf'
+        path += '.csv'
+        io.write_csv(self.listings, path)
 
     @staticmethod
     def prepare_listings_data(listings):

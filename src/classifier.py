@@ -25,7 +25,7 @@ class Classifier(object):
     def __init__(self, dataset, path, long_tfidf, display_columns):
         self.dataset = dataset
         self.data_encoded = None
-        
+        self.label =None
         self.data_train = None
         self.data_test = None
         self.target_train = None
@@ -66,6 +66,7 @@ class Classifier(object):
             io.write_csv(self.data_encoded, path)
 
         target = self.data_encoded['perceived_quality']
+        self.label = target
         self.data_encoded.drop('perceived_quality', axis=1, inplace=True)
         self.data_encoded.drop('id', axis=1, inplace=True)
 
@@ -226,12 +227,13 @@ class Classifier(object):
         )
 
         # only works on Unix?
+        '''
         with open('../data/plots/tree.dot', 'w') as f:
             f.write(dot_data)
         time.sleep(2)
 
         subprocess.call(['dot -Tpng ' + io.get_universal_path('../data/plots/tree.dot') + ' -o ' + io.get_universal_path('../data/plots/image.png')], shell=True)
-
+        '''
         acc = accuracy_score(self.target_test,prediction) * 100
         if acc > self.accuracy_dt:
             self.accuracy_dt = acc
@@ -279,22 +281,18 @@ class Classifier(object):
 
     # Parameter Tuning SVM
     def para_tuning_SVM(self, loose, fine):
-        # TODO
-        # on whole data set or only on training? 
-        # - save path of final file
-        self.data_encoded = io.read_csv('../data/final/dataset_2_encoded.csv')
-        # we need the whole dataset or not?
-        target_label = self.data_encoded['perceived_quality'] 
-        self.data_encoded.drop('perceived_quality', axis=1, inplace=True)
-        self.data_encoded.drop('id', axis=1, inplace=True)
-
-        print('Test on small Dataset')
-        target_label = target_label[:1000]
-        data = self.data_encoded[:1000]
+        target_label = self.label
+        #self.data_encoded.drop('perceived_quality', axis=1, inplace=True)
+        #self.data_encoded.drop('id', axis=1, inplace=True)
+        print(self.data_encoded.head())
+        #print('Test on small Dataset')
+        #target_label = target_label[:1000]
+        #data = self.data_encoded[:1000]
 
         if loose:
             print('Lose Grid Search')
             self.loose_grid_search_SVM(data= self.data_encoded, target=target_label)
+            print("NOT needed again, best results are..")
         if fine:
             print('Fine Grid Search')
             self.fine_grid_search_SVM(data, target=target_label)

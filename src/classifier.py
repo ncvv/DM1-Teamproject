@@ -255,7 +255,7 @@ class Classifier(object):
         target_label = self.label
         #self.data_encoded.drop('perceived_quality', axis=1, inplace=True)
         #self.data_encoded.drop('id', axis=1, inplace=True)
-        print(self.data_encoded.head())
+        #print(self.data_encoded.head())
         #print('Test on small Dataset')
         #target_label = target_label[:1000]
         #data = self.data_encoded[:1000]
@@ -263,7 +263,7 @@ class Classifier(object):
         if loose:
             print('Lose Grid Search')
             self.loose_grid_search_SVM(data= self.data_encoded, target=target_label)
-            print("NOT needed again, best results are..")
+            print("NOT needed again, best results are..") # TODO
         if fine:
             print('Fine Grid Search')
             self.fine_grid_search_SVM(data, target=target_label)
@@ -294,3 +294,25 @@ class Classifier(object):
         grid_search_estimator.fit(data, target)
 
         print("best score is {} with params {}".format(grid_search_estimator.best_score_, grid_search_estimator.best_params_ ))
+'''
+    def heatmap_SVM():
+        import numpy as np
+        import matplotlib.pyplot as plt
+        from matplotlib.colors import Normalize
+        from sklearn.preprocessing import StandardScaler
+        from sklearn.model_selection import StratifiedShuffleSplit
+        from sklearn.model_selection import GridSearchCV
+
+        X= self.data_encoded
+        y= self.label
+
+class MidpointNormalize(Normalize):
+
+    def __init__(self, vmin=None, vmax=None, midpoint=None, clip=False):
+        self.midpoint = midpoint
+        Normalize.__init__(self, vmin, vmax, clip)
+
+    def __call__(self, value, clip=None):
+        x, y = [self.vmin, self.midpoint, self.vmax], [0, 0.5, 1]
+        return np.ma.masked_array(np.interp(value, x, y))
+'''

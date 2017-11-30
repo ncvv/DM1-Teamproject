@@ -43,19 +43,20 @@ def main(renew_listings=False):
     #classifier.para_tuning_nc()
 
     # Classification
+    cross_validate = False
     for kn in range(2, 7):
         classifier.classify_knn(n=kn)
-    classifier.classify_knn(n=classifier.accuracy_knn_n, display_matrix=True) # Leave as is, prints the CM and CR for kNN's best n.
+    classifier.classify_knn(n=classifier.accuracy_knn_n, cross_validate=cross_validate, display_matrix=True) # Leave as is, prints the CM and CR for kNN's best n.
     print('-' * 52)
-    classifier.classify_nb()
+    classifier.classify_nb(cross_validate=cross_validate)
     print('-' * 52)
-    classifier.classify_mnb()
+    classifier.classify_mnb(cross_validate=cross_validate)
     print('-' * 52)
-    classifier.classify_svm(display_roc=True)
+    classifier.classify_svm(cross_validate=cross_validate, display_roc=True)
     print('-' * 52)
-    classifier.classify_nc()
+    classifier.classify_nc(cross_validate=cross_validate)
     print('-' * 52)
-    classifier.classify_dt()
+    classifier.classify_dt(cross_validate=cross_validate)
     print('-' * 52)
 
     print(classifier)

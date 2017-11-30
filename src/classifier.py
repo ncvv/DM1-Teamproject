@@ -9,18 +9,15 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from scipy import interp
-from category_encoders.ordinal import OrdinalEncoder
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.naive_bayes import GaussianNB
-from sklearn.naive_bayes import MultinomialNB
-from sklearn.metrics import accuracy_score, roc_curve, auc, classification_report, confusion_matrix
-from sklearn.model_selection import train_test_split, cross_val_predict
-from sklearn.neighbors.nearest_centroid import NearestCentroid
-from sklearn.svm import SVC
 from sklearn import tree
-from sklearn.model_selection import StratifiedKFold
-from sklearn.model_selection import GridSearchCV
+from sklearn.svm import SVC
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.neighbors.nearest_centroid import NearestCentroid
+from sklearn.naive_bayes import GaussianNB, MultinomialNB
+from sklearn.metrics import accuracy_score, roc_curve, auc, classification_report, confusion_matrix
+from sklearn.model_selection import StratifiedKFold, GridSearchCV, train_test_split, cross_val_score, cross_val_predict
 from sklearn.utils.multiclass import unique_labels
+from category_encoders.ordinal import OrdinalEncoder
 
 import io_util as io
 
@@ -74,13 +71,12 @@ class Classifier(object):
             print('Encoding done for file: ' + str(path))
             io.write_csv(self.data_encoded, path)
 
-        target = self.data_encoded['perceived_quality']
-        self.label = target
+        self.label = self.data_encoded['perceived_quality']
 
         # Insert drop of single columns here
         drop_list = ['id', 'perceived_quality', 'instant_bookable', 'availability_30', 'availability_60', 'availability_90', 'availability_365', 'host_location', 'host_verification_binned', 'host_response_rate_binned', 'require_guest_phone_verification', 'host_response_time', 'zipcode', 'require_guest_profile_picture', 'calculated_host_listings_count', 'first_review', 'last_review']
         self.data_encoded.drop(drop_list, axis=1, inplace=True)
-        self.data_encoded_with_label = pd.concat([self.data_encoded, target], axis=1)
+        self.data_encoded_with_label = pd.concat([self.data_encoded, self.label], axis=1)
 
         # Insert drop of tfidf/amenity columns here
         self.exclude_amenity_columns()
@@ -92,7 +88,7 @@ class Classifier(object):
         if self.display_columns:
             print('Columns:\n' + '\n'.join(list(self.data_encoded)) + '\n')
 
-        self.data_train, self.data_test, self.target_train, self.target_test = train_test_split(self.data_encoded, target, test_size=0.2, random_state=42, stratify=target)
+        self.data_train, self.data_test, self.target_train, self.target_test = train_test_split(self.data_encoded, self.label, test_size=0.2, random_state=42, stratify=self.label)
 
     def __drop(self, start, end):
         ''' Drop columns from data_encoded at given indices. '''
@@ -160,66 +156,85 @@ class Classifier(object):
         if show:
             plt.show()
 
-    def classify_nb(self): 
+    def classify_nb(self, cross_validate=False): 
         ''' Classification with Gaussian Naive Bayes. '''
         cl_label = "Gaussian Naive Bayes"
         naive_bayes = GaussianNB()
         naive_bayes.fit(self.data_train, self.target_train)
         prediction = naive_bayes.predict(self.data_test)
-        acc = accuracy_score(self.target_test, prediction) * 100
-        if acc > self.accuracy_nb:
-            self.accuracy_nb = acc
+
+        if cross_validate:
+            self.accuracy_nb = float("{:.4f}".format(cross_val_score(naive_bayes, self.data_encoded, self.label, cv=10, scoring='accuracy').mean())) * 100
+        else:
+            acc = accuracy_score(self.target_test, prediction) * 100
+            if acc > self.accuracy_nb:
+                self.accuracy_nb = acc
+
         self.__print_cm(self.target_test, prediction, labels=self.binary_labels, print_label=cl_label)
         self.__print_cr(self.target_test, prediction, target_names=self.binary_labels, print_label=cl_label)
         self.__plot_cm(confusion_matrix(self.target_test, prediction), classes=self.binary_labels, print_label=cl_label, show=False)
         self.roc_estimators[cl_label] = naive_bayes
 
-    def classify_mnb(self): 
+    def classify_mnb(self, cross_validate=False): 
         ''' Classification with Multinomial Naive Bayes. '''
         cl_label = "Multinomial Naive Bayes"
-        multi_naive_bayes = MultinomialNB(alpha=0)
+        multi_naive_bayes = MultinomialNB(alpha=1.0e-10)
         multi_naive_bayes.fit(self.data_train, self.target_train)
         prediction = multi_naive_bayes.predict(self.data_test)
-        acc = accuracy_score(self.target_test, prediction) * 100
-        if acc > self.accuracy_mnb:
-            self.accuracy_mnb = acc
+
+        if cross_validate:
+            self.accuracy_mnb = float("{:.4f}".format(cross_val_score(multi_naive_bayes, self.data_encoded, self.label, cv=10, scoring='accuracy').mean())) * 100
+        else:
+            acc = accuracy_score(self.target_test, prediction) * 100
+            if acc > self.accuracy_mnb:
+                self.accuracy_mnb = acc
+
         self.__print_cm(self.target_test, prediction, labels=self.binary_labels, print_label=cl_label)
         self.__print_cr(self.target_test, prediction, target_names=self.binary_labels, print_label=cl_label)
         self.__plot_cm(confusion_matrix(self.target_test, prediction), classes=self.binary_labels, print_label=cl_label, show=False)
         self.roc_estimators[cl_label] = multi_naive_bayes
 
-
-    def classify_knn(self, n=3, display_matrix=False):
+    def classify_knn(self, n, cross_validate=False, display_matrix=False):
         ''' Classification with K_Nearest_Neighbor. '''
         cl_label = "k-Nearest Neighbors"
         knn_estimator = KNeighborsClassifier(algorithm='ball_tree', p=2, n_neighbors=n, weights='distance')
         knn_estimator.fit(self.data_train, self.target_train)
         prediction = knn_estimator.predict(self.data_test)
-        acc = accuracy_score(self.target_test, prediction) * 100
-        if acc > self.accuracy_knn:
-            self.accuracy_knn = acc
-            self.accuracy_knn_n = n
+
+        if cross_validate:
+            self.accuracy_knn = float("{:.4f}".format(cross_val_score(knn_estimator, self.data_encoded, self.label, cv=10, scoring='accuracy').mean())) * 100
+        else:
+            acc = accuracy_score(self.target_test, prediction) * 100
+            if acc > self.accuracy_knn:
+                self.accuracy_knn = acc
+                self.accuracy_knn_n = n
+
         if display_matrix:
             self.__print_cm(self.target_test, prediction, labels=self.binary_labels, print_label=cl_label)
             self.__print_cr(self.target_test, prediction, target_names=self.binary_labels, print_label=cl_label)
             self.__plot_cm(confusion_matrix(self.target_test, prediction), classes=self.binary_labels, print_label=cl_label, show=False)
         self.roc_estimators[cl_label] = knn_estimator
 
-    def classify_nc(self):
+    def classify_nc(self, cross_validate=False):
         ''' Classification with Nearest Centroid. '''
         cl_label = "Nearest Centroid"
         nc_estimator = NearestCentroid(metric='euclidean', shrink_threshold=6)
         nc_estimator.fit(self.data_train, self.target_train)
         prediction = nc_estimator.predict(self.data_test)
-        acc = accuracy_score(self.target_test, prediction) * 100
-        if acc > self.accuracy_nc:
-            self.accuracy_nc = acc
+        
+        if cross_validate:
+            self.accuracy_nc = float("{:.4f}".format(cross_val_score(nc_estimator, self.data_encoded, self.label, cv=10, scoring='accuracy').mean())) * 100
+        else:
+            acc = accuracy_score(self.target_test, prediction) * 100
+            if acc > self.accuracy_nc:
+                self.accuracy_nc = acc
+
         self.__print_cm(self.target_test, prediction, labels=self.binary_labels, print_label=cl_label)
         self.__print_cr(self.target_test, prediction, target_names=self.binary_labels, print_label=cl_label)
         self.__plot_cm(confusion_matrix(self.target_test, prediction), classes=self.binary_labels, print_label=cl_label, show=False)
         #self.roc_estimators[cl_label] = nc_estimator
 
-    def classify_svm(self, display_roc=False): #, C=1.0, gamma ='auto')
+    def classify_svm(self, display_roc=False, cross_validate=False): #, C=1.0, gamma ='auto')
         ''' Classification with Support Vector Machine. '''
         cl_label = "Support Vector Machine"
         if not display_roc:
@@ -229,14 +244,19 @@ class Classifier(object):
             self.roc_estimators[cl_label] = svm_estimator
         svm_estimator.fit(self.data_train, self.target_train)
         prediction = svm_estimator.predict(self.data_test)
-        acc = accuracy_score(self.target_test, prediction) * 100
-        if acc > self.accuracy_svm:
-            self.accuracy_svm = acc
+
+        if cross_validate:
+            self.accuracy_svm = float("{:.4f}".format(cross_val_score(svm_estimator, self.data_encoded, self.label, cv=10, scoring='accuracy').mean())) * 100
+        else:
+            acc = accuracy_score(self.target_test, prediction) * 100
+            if acc > self.accuracy_svm:
+                self.accuracy_svm = acc
+
         self.__print_cm(self.target_test, prediction, labels=self.binary_labels, print_label=cl_label)
         self.__print_cr(self.target_test, prediction, target_names=self.binary_labels, print_label=cl_label)
         self.__plot_cm(confusion_matrix(self.target_test, prediction), classes=self.binary_labels, print_label=cl_label, show=False)
 
-    def classify_dt(self):
+    def classify_dt(self, cross_validate=False):
         ''' Clasificiation with Decision Tree. '''
         cl_label = "Decision Tree"
         decision_tree = tree.DecisionTreeClassifier(max_depth=5, criterion="entropy", min_samples_split=6)
@@ -260,9 +280,13 @@ class Classifier(object):
             subprocess.call(['dot -Tpng ' + io.get_universal_path('../data/plots/tree.dot') + ' -o ' + io.get_universal_path('../data/plots/Decision Tree.png')], shell=True)
             subprocess.call(['rm -f ' + io.get_universal_path('../data/plots/tree.dot')], shell=True)
 
-        acc = accuracy_score(self.target_test, prediction) * 100
-        if acc > self.accuracy_dt:
-            self.accuracy_dt = acc
+        if cross_validate:
+            self.accuracy_dt = float("{:.4f}".format(cross_val_score(decision_tree, self.data_encoded, self.label, cv=10, scoring='accuracy').mean())) * 100
+        else:
+            acc = accuracy_score(self.target_test, prediction) * 100
+            if acc > self.accuracy_dt:
+                self.accuracy_dt = acc
+
         self.__print_cm(self.target_test, prediction, labels=self.binary_labels, print_label=cl_label)
         self.__print_cr(self.target_test, prediction, target_names=self.binary_labels, print_label=cl_label)
         self.__plot_cm(confusion_matrix(self.target_test, prediction), classes=self.binary_labels, print_label=cl_label, show=False)
